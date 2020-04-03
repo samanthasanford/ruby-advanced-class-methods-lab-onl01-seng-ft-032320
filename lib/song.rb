@@ -30,11 +30,7 @@ class Song
   end
 
   def self.find_or_create_by_name(name)
-    if @name.class.find_by_name(name)
-      @name
-    else
-      @name.class.create_by_name(name)
-    end
+    self.find_by_name(name) || self.create_by_name(name)
   end
 
   def self.alphabetical
@@ -42,22 +38,21 @@ class Song
   end
 
   def self.new_from_filename(data)
-    data.delete_suffix!(".mp3")
-    new_filename = data.split("-")
-    song.self.new
-    song.name = new_filename[1]
-    song.artist_name = new_filename[0]
+    rows = data.split(/ - |.mp3/)
+    name = rows[1]
+    artist_name = rows[0]
+    song = self.new
+    song.name = name
+    song.artist_name = artist_name
     song
   end
 
   def self.create_from_filename(data)
-    song = self.new_from_filename(data)
-    song.save
-    song
+    @@all << self.new_from_filename(data)
   end
 
   def self.destroy_all
-    @@all.clear
+    self.all.clear
   end
 
   def save
